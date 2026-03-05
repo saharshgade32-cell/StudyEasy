@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyEasy - Your School Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: #475569;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        header h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            font-weight: 300;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            animation: slideUp 0.8s ease-out 0.1s both;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: var(--text-primary);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95em;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        /* Forms */
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        button {
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Flashcards */
+        .flashcard-container {
+            perspective: 1000px;
+            margin-bottom: 20px;
+        }
+
+        .flashcard {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 30px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Lists */
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            background: var(--surface-light);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .task-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            padding: 8px 15px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Timer */
+        .timer-display {
+            font-family: 'Space Mono', monospace;
+            font-size: 4em;
+            text-align: center;
+            margin: 30px 0;
+            color: var(--primary);
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .timer-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-buttons button {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        /* Grade Calculator */
+        .grade-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .grade-card {
+            background: var(--surface-light);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .grade-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .grade-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 10px 0;
+        }
+
+        /* Math Solver */
+        .math-result {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--success);
+            margin-top: 20px;
+            display: none;
+        }
+
+        .math-result.show {
+            display: block;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .result-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--success);
+            margin: 10px 0;
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.05));
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .timer-display {
+                font-size: 2.5em;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 StudyEasy</h1>
+            <p>Your complete school companion</p>
+            <p style="font-size: 0.9em; color: var(--text-secondary); margin-top: 5px;">by Saharsh Gade</p>
+        </header>
+
+        <nav>
+            <button class="nav-btn active" onclick="switchSection('flashcards')">🎯 Flashcards</button>
+            <button class="nav-btn" onclick="switchSection('homework')">✓ Homework</button>
+            <button class="nav-btn" onclick="switchSection('grades')">📊 Grades</button>
+            <button class="nav-btn" onclick="switchSection('timer')">⏱️ Timer</button>
+            <button class="nav-btn" onclick="switchSection('math')">🔢 Math Solver</button>
+            <button class="nav-btn" onclick="switchSection('notes')">📝 Notes</button>
+            <button class="nav-btn" onclick="switchSection('schedule')">📅 Schedule</button>
+            <button class="nav-btn" onclick="switchSection('gpa')">🎓 GPA Calc</button>
+            <button class="nav-btn" onclick="switchSection('dictionary')">📚 Dictionary</button>
+        </nav>
+
+        <!-- Flashcards Section -->
+        <div id="flashcards" class="section active">
+            <div class="card">
+                <h3>Create Flashcards</h3>
+                <input type="text" id="fcQuestion" placeholder="Question or term">
+                <textarea id="fcAnswer" placeholder="Answer or definition" rows="3"></textarea>
+                <button onclick="addFlashcard()">Add Flashcard</button>
+            </div>
+
+            <div id="flashcardsDisplay"></div>
+        </div>
+
+        <!-- Homework Section -->
+        <div id="homework" class="section">
+            <div class="card">
+                <h3>Add Homework</h3>
+                <input type="text" id="hwSubject" placeholder="Subject">
+                <textarea id="hwTask" placeholder="Task description" rows="3"></textarea>
+                <input type="date" id="hwDueDate">
+                <button onclick="addHomework()">Add Task</button>
+            </div>
+
+            <div class="card">
+                <h3>Your Tasks</h3>
+                <ul id="homeworkList" class="task-list"></ul>
+            </div>
+        </div>
+
+        <!-- Grades Section -->
+        <div id="grades" class="section">
+            <div class="card">
+                <h3>Track Your Grades</h3>
+                <input type="text" id="gradeSubject" placeholder="Subject">
+                <input type="number" id="gradeScore" placeholder="Score" min="0" max="100">
+                <input type="number" id="gradeWeight" placeholder="Weight %" min="0" max="100" value="100">
+                <button onclick="addGrade()">Add Grade</button>
+            </div>
+
+            <div id="gradesDisplay" class="grade-grid"></div>
+
+            <div class="card" style="margin-top: 20px;">
+                <h3>Overall Statistics</h3>
+                <div class="stat-box">
+                    <div class="stat-label">Average Grade</div>
+                    <div class="stat-value" id="averageGrade">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timer Section -->
+        <div id="timer" class="section">
+            <div class="card">
+                <h3>Study Timer (Pomodoro)</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px;">
+                    <button onclick="setTimer(25)">25 min</button>
+                    <button onclick="setTimer(45)">45 min</button>
+                    <button onclick="setTimer(60)">60 min</button>
+                    <input type="number" id="customTime" placeholder="Custom (min)" min="1" style="width: 100%;">
+                </div>
+                <button onclick="setCustomTimer()" style="width: 100%; margin-bottom: 15px;">Set Custom</button>
+
+                <div class="timer-display" id="timerDisplay">00:00</div>
+
+                <div class="timer-buttons">
+                    <button onclick="startTimer()">▶ Start</button>
+                    <button onclick="pauseTimer()">⏸ Pause</button>
+                    <button onclick="resetTimer()">🔄 Reset</button>
+                </div>
+
+                <div style="text-align: center; color: var(--text-secondary);">
+                    <p id="timerStatus">Ready to start studying!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div id="notes" class="section">
+            <div class="card">
+                <h3>Create Class Notes</h3>
+                <input type="text" id="noteClass" placeholder="Class/Subject">
+                <textarea id="noteContent" placeholder="Write your notes here..." rows="5"></textarea>
+                <button onclick="addNote()">Save Note</button>
+            </div>
+
+            <div id="notesList"></div>
+        </div>
+
+        <!-- Schedule Section -->
+        <div id="schedule" class="section">
+            <div class="card">
+                <h3>Class Schedule</h3>
+                <input type="text" id="scheduleClass" placeholder="Class Name">
+                <input type="time" id="scheduleTime" placeholder="Time">
+                <input type="text" id="scheduleRoom" placeholder="Room/Location">
+                <input type="text" id="scheduleDay" placeholder="Day (e.g., Monday, MWF)">
+                <button onclick="addSchedule()">Add Class</button>
+            </div>
+
+            <div class="card">
+                <h3>Your Classes</h3>
+                <div id="scheduleDisplay"></div>
+            </div>
+        </div>
+
+        <!-- GPA Calculator Section -->
+        <div id="gpa" class="section">
+            <div class="card">
+                <h3>GPA Calculator</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">Enter your grades to calculate GPA (4.0 scale)</p>
+                <input type="text" id="gpaClass" placeholder="Class Name">
+                <input type="number" id="gpaGrade" placeholder="Grade (%)" min="0" max="100">
+                <input type="number" id="gpaCredit" placeholder="Credit Hours" min="0.5" step="0.5" value="3">
+                <button onclick="addGPAGrade()">Add Grade</button>
+            </div>
+
+            <div class="card">
+                <h3>GPA Breakdown</h3>
+                <div id="gpaList"></div>
+                <div class="stat-box" style="margin-top: 20px;">
+                    <div class="stat-label">Cumulative GPA</div>
+                    <div class="stat-value" id="cumulativeGPA">0.0</div>
+                </div>
+            </div>
+
+            <div class="card" style="background: rgba(99, 102, 241, 0.1); border-left: 4px solid var(--primary);">
+                <h4 style="color: var(--primary); margin-bottom: 10px;">📊 Grade Scale</h4>
+                <div style="font-size: 0.9em; color: var(--text-secondary);">
+                    A (90-100): 4.0 | B (80-89): 3.0 | C (70-79): 2.0 | D (60-69): 1.0 | F (Below 60): 0.0
+                </div>
+            </div>
+        </div>
+
+        <!-- Dictionary Section -->
+        <div id="dictionary" class="section">
+            <div class="card">
+                <h3>Study Dictionary</h3>
+                <input type="text" id="dictWord" placeholder="Word or Term">
+                <textarea id="dictDefinition" placeholder="Definition and explanation" rows="3"></textarea>
+                <button onclick="addDictEntry()">Save Definition</button>
+            </div>
+
+            <div class="card">
+                <h3>Your Vocabulary</h3>
+                <input type="text" id="dictSearch" placeholder="Search definitions..." onkeyup="searchDictionary()">
+                <div id="dictionaryList" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <!-- Math Solver Section -->
+        <div id="math" class="section">
+            <div class="card">
+                <h3>Quick Math Solver</h3>
+                <input type="text" id="mathExpression" placeholder="Enter expression (e.g., 2+2, 15*3, 100/5)">
+                <button onclick="solveMath()">Calculate</button>
+
+                <div id="mathResult" class="math-result">
+                    <div style="color: var(--text-secondary); margin-bottom: 10px;">Result:</div>
+                    <div class="result-value" id="mathAnswer">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Math Symbols & Formulas</h3>
+                
+                <div style="margin-bottom: 20px; padding: 15px; background: var(--surface-light); border-radius: 8px;">
+                    <h4 style="color: var(--secondary); margin-bottom: 15px;">⌨️ Keyboard Symbols</h4>
+                    <div class="grid-2">
+                        <div style="padding: 10px; border-left: 3px solid var(--primary);">
+                            <div style="font-weight: 600; color: var(--primary);">+</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Addition</div>
+                        </div>
+                        <div style="padding: 10px; border-left: 3px solid var(--primary);">
+                            <div style="font-weight: 600; color: var(--primary);">-</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Subtraction</div>
+                        </div>
+                        <div style="padding: 10px; border-left: 3px solid var(--primary);">
+                            <div style="font-weight: 600; color: var(--primary);">*</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Multiplication</div>
+                        </div>
+                        <div style="padding: 10px; border-left: 3px solid var(--primary);">
+                            <div style="font-weight: 600; color: var(--primary);">/</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Division</div>
+                        </div>
+                        <div style="padding: 10px; border-left: 3px solid var(--primary);">
+                            <div style="font-weight: 600; color: var(--primary);">**</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Exponent/Power</div>
+                        </div>
+                        <div style="padding: 10px; border-left: 3px solid var(--primary);">
+                            <div style="font-weight: 600; color: var(--primary);">%</div>
+                            <div style="font-size: 0.85em; color: var(--text-secondary);">Modulo (remainder)</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(99, 102, 241, 0.1); border-radius: 6px; border-left: 3px solid var(--secondary);">
+                        <strong style="color: var(--secondary);">Examples:</strong>
+                        <div style="font-size: 0.9em; margin-top: 8px; color: var(--text-secondary);">
+                            15 + 8 = 23 | 20 - 5 = 15 | 6 * 7 = 42 | 100 / 4 = 25 | 2 ** 3 = 8
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--secondary); margin-bottom: 15px;">📐 Key Formulas</h4>
+                <div class="grid-2">
+                    <div class="stat-box">
+                        <div class="stat-label">Pythagorean Theorem</div>
+                        <p style="font-size: 0.9em; color: var(--text-secondary);">a² + b² = c²</p>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Quadratic Formula</div>
+                        <p style="font-size: 0.9em; color: var(--text-secondary);">x = (-b ± √(b²-4ac)) / 2a</p>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Area of Circle</div>
+                        <p style="font-size: 0.9em; color: var(--text-secondary);">A = πr²</p>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Circumference</div>
+                        <p style="font-size: 0.9em; color: var(--text-secondary);">C = 2πr</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage (in-memory)
+        let flashcards = [];
+        let homeworkTasks = [];
+        let grades = [];
+        let notes = [];
+        let schedule = [];
+        let gpaGrades = [];
+        let dictionary = [];
+        let timerInterval = null;
+        let timeRemaining = 0;
+        let isRunning = false;
+
+        // Load from localStorage if available
+        function loadData() {
+            try {
+                const saved = localStorage.getItem('studyEasyData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    flashcards = data.flashcards || [];
+                    homeworkTasks = data.homeworkTasks || [];
+                    grades = data.grades || [];
+                    notes = data.notes || [];
+                    schedule = data.schedule || [];
+                    gpaGrades = data.gpaGrades || [];
+                    dictionary = data.dictionary || [];
+                    renderFlashcards();
+                    renderHomework();
+                    renderGrades();
+                    renderNotes();
+                    renderSchedule();
+                    renderGPAGrades();
+                    renderDictionary();
+                }
+            } catch (e) {
+                console.log('Using in-memory storage');
+            }
+        }
+
+        // Save data
+        function saveData() {
+            try {
+                localStorage.setItem('studyEasyData', JSON.stringify({
+                    flashcards,
+                    homeworkTasks,
+                    grades,
+                    notes,
+                    schedule,
+                    gpaGrades,
+                    dictionary
+                }));
+            } catch (e) {
+                console.log('Data stored in memory only');
+            }
+        }
+
+        // Section switching
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Flashcards
+        function addFlashcard() {
+            const question = document.getElementById('fcQuestion').value;
+            const answer = document.getElementById('fcAnswer').value;
+            
+            if (question && answer) {
+                flashcards.push({ id: Date.now(), question, answer, flipped: false });
+                document.getElementById('fcQuestion').value = '';
+                document.getElementById('fcAnswer').value = '';
+                saveData();
+                renderFlashcards();
+            }
+        }
+
+        function renderFlashcards() {
+            const container = document.getElementById('flashcardsDisplay');
+            container.innerHTML = flashcards.map(card => `
+                <div class="flashcard-container">
+                    <div class="flashcard" onclick="toggleFlashcard(${card.id})">
+                        <div>${card.flipped ? card.answer : card.question}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteFlashcard(${card.id})" style="width: 100%; margin-top: 10px;">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function toggleFlashcard(id) {
+            const card = flashcards.find(c => c.id === id);
+            if (card) card.flipped = !card.flipped;
+            renderFlashcards();
+        }
+
+        function deleteFlashcard(id) {
+            flashcards = flashcards.filter(c => c.id !== id);
+            saveData();
+            renderFlashcards();
+        }
+
+        // Homework
+        function addHomework() {
+            const subject = document.getElementById('hwSubject').value;
+            const task = document.getElementById('hwTask').value;
+            const dueDate = document.getElementById('hwDueDate').value;
+
+            if (subject && task) {
+                homeworkTasks.push({
+                    id: Date.now(),
+                    subject,
+                    task,
+                    dueDate,
+                    completed: false
+                });
+                document.getElementById('hwSubject').value = '';
+                document.getElementById('hwTask').value = '';
+                document.getElementById('hwDueDate').value = '';
+                saveData();
+                renderHomework();
+            }
+        }
+
+        function renderHomework() {
+            const list = document.getElementById('homeworkList');
+            list.innerHTML = homeworkTasks.map(hw => `
+                <li class="task-item ${hw.completed ? 'completed' : ''}">
+                    <div style="text-align: left; flex: 1;">
+                        <input type="checkbox" ${hw.completed ? 'checked' : ''} onchange="toggleHomework(${hw.id})">
+                        <strong>${hw.subject}</strong><br>
+                        ${hw.task}<br>
+                        <span style="font-size: 0.85em; color: var(--text-secondary);">Due: ${hw.dueDate || 'No date'}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteHomework(${hw.id})">Delete</button>
+                </li>
+            `).join('');
+        }
+
+        function toggleHomework(id) {
+            const task = homeworkTasks.find(t => t.id === id);
+            if (task) task.completed = !task.completed;
+            saveData();
+            renderHomework();
+        }
+
+        function deleteHomework(id) {
+            homeworkTasks = homeworkTasks.filter(t => t.id !== id);
+            saveData();
+            renderHomework();
+        }
+
+        // Grades
+        function addGrade() {
+            const subject = document.getElementById('gradeSubject').value;
+            const score = parseFloat(document.getElementById('gradeScore').value);
+            const weight = parseFloat(document.getElementById('gradeWeight').value) || 100;
+
+            if (subject && !isNaN(score)) {
+                grades.push({
+                    id: Date.now(),
+                    subject,
+                    score,
+                    weight
+                });
+                document.getElementById('gradeSubject').value = '';
+                document.getElementById('gradeScore').value = '';
+                document.getElementById('gradeWeight').value = '100';
+                saveData();
+                renderGrades();
+            }
+        }
+
+        function renderGrades() {
+            const container = document.getElementById('gradesDisplay');
+            container.innerHTML = grades.map(grade => `
+                <div class="grade-card">
+                    <h4>${grade.subject}</h4>
+                    <div class="grade-value">${grade.score}%</div>
+                    <div style="font-size: 0.85em; color: var(--text-secondary);">Weight: ${grade.weight}%</div>
+                    <button class="delete-btn" onclick="deleteGrade(${grade.id})" style="width: 100%; margin-top: 10px;">Delete</button>
+                </div>
+            `).join('');
+
+            updateAverageGrade();
+        }
+
+        function deleteGrade(id) {
+            grades = grades.filter(g => g.id !== id);
+            saveData();
+            renderGrades();
+        }
+
+        function updateAverageGrade() {
+            if (grades.length === 0) {
+                document.getElementById('averageGrade').textContent = '--';
+                return;
+            }
+
+            const totalWeight = grades.reduce((sum, g) => sum + g.weight, 0);
+            const weightedSum = grades.reduce((sum, g) => sum + (g.score * g.weight), 0);
+            const average = Math.round(weightedSum / totalWeight);
+            document.getElementById('averageGrade').textContent = average + '%';
+        }
+
+        // Timer
+        function setTimer(minutes) {
+            timeRemaining = minutes * 60;
+            updateDisplay();
+            document.getElementById('timerStatus').textContent = `${minutes} minute timer set`;
+        }
+
+        function setCustomTimer() {
+            const custom = parseInt(document.getElementById('customTime').value);
+            if (custom > 0) {
+                setTimer(custom);
+            }
+        }
+
+        function startTimer() {
+            if (timeRemaining <= 0) {
+                document.getElementById('timerStatus').textContent = 'Please set a time first';
+                return;
+            }
+            if (!isRunning) {
+                isRunning = true;
+                document.getElementById('timerStatus').textContent = 'Timer running...';
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    updateDisplay();
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        document.getElementById('timerStatus').textContent = '✓ Time\'s up!';
+                        playSound();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('timerStatus').textContent = 'Timer paused';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeRemaining = 0;
+            updateDisplay();
+            document.getElementById('timerStatus').textContent = 'Ready to start studying!';
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timerDisplay').textContent = 
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        }
+
+        function playSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // Notes
+        function addNote() {
+            const className = document.getElementById('noteClass').value;
+            const content = document.getElementById('noteContent').value;
+
+            if (className && content) {
+                notes.push({
+                    id: Date.now(),
+                    className,
+                    content,
+                    date: new Date().toLocaleDateString()
+                });
+                document.getElementById('noteClass').value = '';
+                document.getElementById('noteContent').value = '';
+                saveData();
+                renderNotes();
+            }
+        }
+
+        function renderNotes() {
+            const container = document.getElementById('notesList');
+            container.innerHTML = notes.map(note => `
+                <div class="card">
+                    <h3>${note.className}</h3>
+                    <div style="color: var(--text-secondary); font-size: 0.85em; margin-bottom: 10px;">📅 ${note.date}</div>
+                    <div style="background: var(--surface-light); padding: 15px; border-radius: 8px; margin-bottom: 10px; white-space: pre-wrap;">
+                        ${note.content}
+                    </div>
+                    <button class="delete-btn" onclick="deleteNote(${note.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteNote(id) {
+            notes = notes.filter(n => n.id !== id);
+            saveData();
+            renderNotes();
+        }
+
+        // Schedule
+        function addSchedule() {
+            const className = document.getElementById('scheduleClass').value;
+            const time = document.getElementById('scheduleTime').value;
+            const room = document.getElementById('scheduleRoom').value;
+            const day = document.getElementById('scheduleDay').value;
+
+            if (className && time && day) {
+                schedule.push({
+                    id: Date.now(),
+                    className,
+                    time,
+                    room,
+                    day
+                });
+                document.getElementById('scheduleClass').value = '';
+                document.getElementById('scheduleTime').value = '';
+                document.getElementById('scheduleRoom').value = '';
+                document.getElementById('scheduleDay').value = '';
+                saveData();
+                renderSchedule();
+            }
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById('scheduleDisplay');
+            if (schedule.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No classes added yet</p>';
+                return;
+            }
+
+            const sorted = [...schedule].sort((a, b) => a.time.localeCompare(b.time));
+            container.innerHTML = sorted.map(cls => `
+                <div class="task-item" style="border-left-color: var(--secondary);">
+                    <div style="text-align: left; flex: 1;">
+                        <strong style="color: var(--secondary);">${cls.className}</strong><br>
+                        <span style="color: var(--text-secondary);">🕐 ${cls.time} | 📍 ${cls.room || 'TBA'}</span><br>
+                        <span style="color: var(--primary); font-size: 0.9em;">${cls.day}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteSchedule(${cls.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteSchedule(id) {
+            schedule = schedule.filter(s => s.id !== id);
+            saveData();
+            renderSchedule();
+        }
+
+        // GPA Calculator
+        function addGPAGrade() {
+            const className = document.getElementById('gpaClass').value;
+            const grade = parseFloat(document.getElementById('gpaGrade').value);
+            const credits = parseFloat(document.getElementById('gpaCredit').value) || 3;
+
+            if (className && !isNaN(grade) && grade >= 0 && grade <= 100) {
+                gpaGrades.push({
+                    id: Date.now(),
+                    className,
+                    grade,
+                    credits,
+                    gpa: gradeToGPA(grade)
+                });
+                document.getElementById('gpaClass').value = '';
+                document.getElementById('gpaGrade').value = '';
+                document.getElementById('gpaCredit').value = '3';
+                saveData();
+                renderGPAGrades();
+            }
+        }
+
+        function gradeToGPA(percentage) {
+            if (percentage >= 90) return 4.0;
+            if (percentage >= 80) return 3.0;
+            if (percentage >= 70) return 2.0;
+            if (percentage >= 60) return 1.0;
+            return 0.0;
+        }
+
+        function renderGPAGrades() {
+            const container = document.getElementById('gpaList');
+            container.innerHTML = gpaGrades.map(g => `
+                <div class="task-item" style="border-left-color: var(--accent);">
+                    <div style="text-align: left; flex: 1;">
+                        <strong>${g.className}</strong><br>
+                        <span style="color: var(--text-secondary); font-size: 0.9em;">
+                            Grade: ${g.grade}% | GPA: ${g.gpa.toFixed(1)} | Credits: ${g.credits}
+                        </span>
+                    </div>
+                    <button class="delete-btn" onclick="deleteGPAGrade(${g.id})">Delete</button>
+                </div>
+            `).join('');
+
+            calculateCumulativeGPA();
+        }
+
+        function deleteGPAGrade(id) {
+            gpaGrades = gpaGrades.filter(g => g.id !== id);
+            saveData();
+            renderGPAGrades();
+        }
+
+        function calculateCumulativeGPA() {
+            if (gpaGrades.length === 0) {
+                document.getElementById('cumulativeGPA').textContent = '0.0';
+                return;
+            }
+
+            const totalCredits = gpaGrades.reduce((sum, g) => sum + g.credits, 0);
+            const totalPoints = gpaGrades.reduce((sum, g) => sum + (g.gpa * g.credits), 0);
+            const cumGPA = (totalPoints / totalCredits).toFixed(2);
+            document.getElementById('cumulativeGPA').textContent = cumGPA;
+        }
+
+        // Dictionary
+        function addDictEntry() {
+            const word = document.getElementById('dictWord').value;
+            const definition = document.getElementById('dictDefinition').value;
+
+            if (word && definition) {
+                dictionary.push({
+                    id: Date.now(),
+                    word: word.toLowerCase(),
+                    definition
+                });
+                document.getElementById('dictWord').value = '';
+                document.getElementById('dictDefinition').value = '';
+                saveData();
+                renderDictionary();
+            }
+        }
+
+        function renderDictionary() {
+            const container = document.getElementById('dictionaryList');
+            if (dictionary.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No definitions added yet</p>';
+                return;
+            }
+
+            const sorted = [...dictionary].sort((a, b) => a.word.localeCompare(b.word));
+            container.innerHTML = sorted.map(entry => `
+                <div class="card" style="border-left: 4px solid var(--success); margin-bottom: 10px;">
+                    <h4 style="color: var(--success);">${entry.word.toUpperCase()}</h4>
+                    <div style="color: var(--text-secondary); white-space: pre-wrap; line-height: 1.6;">
+                        ${entry.definition}
+                    </div>
+                    <button class="delete-btn" onclick="deleteDictEntry(${entry.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function searchDictionary() {
+            const searchTerm = document.getElementById('dictSearch').value.toLowerCase();
+            const filtered = dictionary.filter(entry => 
+                entry.word.includes(searchTerm) || entry.definition.toLowerCase().includes(searchTerm)
+            );
+
+            const container = document.getElementById('dictionaryList');
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No matches found</p>';
+                return;
+            }
+
+            const sorted = filtered.sort((a, b) => a.word.localeCompare(b.word));
+            container.innerHTML = sorted.map(entry => `
+                <div class="card" style="border-left: 4px solid var(--success); margin-bottom: 10px;">
+                    <h4 style="color: var(--success);">${entry.word.toUpperCase()}</h4>
+                    <div style="color: var(--text-secondary); white-space: pre-wrap; line-height: 1.6;">
+                        ${entry.definition}
+                    </div>
+                    <button class="delete-btn" onclick="deleteDictEntry(${entry.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteDictEntry(id) {
+            dictionary = dictionary.filter(d => d.id !== id);
+            saveData();
+            renderDictionary();
+        }
+
+        // Math Solver
+        function solveMath() {
+            const expression = document.getElementById('mathExpression').value;
+            try {
+                const result = Function('"use strict"; return (' + expression + ')')();
+                document.getElementById('mathAnswer').textContent = result;
+                document.getElementById('mathResult').classList.add('show');
+            } catch (e) {
+                document.getElementById('mathAnswer').textContent = 'Error: Invalid expression';
+                document.getElementById('mathResult').classList.add('show');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
